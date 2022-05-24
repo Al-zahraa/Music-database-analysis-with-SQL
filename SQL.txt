@@ -1,0 +1,55 @@
+/*Query 1 - The query used for 1st insight*/
+
+SELECT a.ArtistId,
+       a.Name,
+       COUNT(t.TrackId) AS songs
+FROM Artist a
+JOIN Album b ON a.ArtistId = b.ArtistId
+JOIN Track t ON b.AlbumId = t.AlbumId
+JOIN Genre g ON t.GenreId = g.GenreId
+WHERE g.name = "Rock"
+GROUP BY a.ArtistId
+ORDER BY COUNT(t.TrackId) DESC
+LIMIT 10;
+
+/*Query 2 - The query used for 2ed insight*/
+
+SELECT a.Name,
+       SUM(vl.UnitPrice)* vl.Quantity AS AmountSpent
+FROM Artist a
+JOIN Album b ON a.ArtistId = b.ArtistId
+JOIN Track t ON b.AlbumId = t.AlbumId
+JOIN InvoiceLine vl ON t.TrackId = vl.TrackId
+GROUP BY a.Name
+ORDER BY AmountSpent DESC
+LIMIT 10;
+
+/*Query 3 - The query used for 3ed insight*/
+
+SELECT a.Name,
+       SUM(vl.Quantity)*vl.UnitPrice AS AmountSpent,
+       c.CustomerId,
+       C.FirstName,
+       c.LastName
+FROM Artist a
+JOIN Album b ON a.ArtistId = b.ArtistId
+JOIN Track t ON b.AlbumId = t.AlbumId
+JOIN InvoiceLine vl ON t.TrackId = vl.TrackId
+JOIN Invoice v ON vl.InvoiceID = v.InvoiceId
+JOIN Customer c ON v.CustomerId = c.CustomerId
+WHERE a.name = "Iron Maiden"
+GROUP BY c.CustomerId
+ORDER BY AmountSpent DESC
+LIMIT 15;
+
+/*Query 4 - The query used for 4th insight*/
+
+SELECT DISTINCT g.Name AS Ganre_Name,
+                COUNT(c.CustomerId) AS Total_Customers
+FROM Customer c
+JOIN Invoice v ON c.CustomerId = v.CustomerId
+JOIN InvoiceLine l ON v.InvoiceId = l.InvoiceId
+JOIN Track t ON l.TrackId = t.TrackId
+JOIN Genre g ON t.GenreId = g.GenreId
+GROUP BY g.Name
+ORDER BY Total_customers DESC;
